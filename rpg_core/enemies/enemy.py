@@ -1,28 +1,52 @@
+from abc import ABC, abstractmethod
+
+from rpg_core.abilities.ability_result import AbilityResult
 from rpg_core.entities.entity import Entity
 
 
 # HERANÇA: Enemy herda de Entity
-class Enemy(Entity):
-    """Classe base para os monstros e inimigos do jogo."""
+class Enemy(Entity, ABC):
+    """Classe base abstrata para todos os monstros e chefes do RPG."""
 
     def __init__(
         self,
         name: str,
         title: str,
-        max_hp: int = 80,
-        attack: int = 14,
-        defense: int = 3,
-        xp_reward: int = 50,
+        level: int,
+        max_hp: int,
+        max_energy: int,
+        attack: int,
+        defense: int,
+        speed: int,
+        xp_reward: int,
     ) -> None:
-        super().__init__(name=name, max_hp=max_hp, attack=attack, defense=defense)
-        self._title: str = title
+        super().__init__(
+            name=name,
+            level=level,
+            max_hp=max_hp,
+            max_energy=max_energy,
+            attack=attack,
+            defense=defense,
+            speed=speed,
+        )
         self._xp_reward: int = xp_reward
+        self._title: str = title
 
-    # DEPENDÊNCIA: o turno do inimigo depende da entidade jogador passada por parâmetro
-    def takeTurnAi(self, player: Entity) -> int:
-        """Executa a ação simples de ataque do inimigo contra o jogador."""
-        return player.takeDamage(self._attack, type="physical", isCrit=False)
+    def getXpReward(self) -> int:
+        return self._xp_reward
 
-    # POLIMORFISMO: implementação específica de getRoleDescription() para Enemy
+    def getTitle(self) -> str:
+        return self._title
+
+    def applyTurnStartPassive(self) -> list[str]:
+        """Passiva padrão vazia para inimigos que não possuem regeneração especial."""
+        return []
+
+    # POLIMORFISMO e DEPENDÊNCIA: cada subclasse de Enemy define sua IA usando Entity e retornando AbilityResult
+    @abstractmethod
+    def takeTurnAi(self, player: Entity) -> AbilityResult:
+        """Decide e executa a ação do inimigo contra o jogador."""
+        raise NotImplementedError
+
     def getRoleDescription(self) -> str:
-        return f"Inimigo {self._name}, {self._title} (Recompensa: {self._xp_reward} XP)."
+        return f"{self._name}, {self._title} (Nv.{self._level} | Recompensa: {self._xp_reward} XP)"
