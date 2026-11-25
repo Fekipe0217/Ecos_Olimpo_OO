@@ -24,6 +24,9 @@ class ChildOfZeus(Demigod):
     def getStaticCharges(self) -> int:
         return self._staticCharges
 
+    def setStaticCharges(self, charges: int) -> None:
+        self._staticCharges = max(0, min(3, charges))
+
     # POLIMORFISMO: sobrescreve applyTurnStartPassive() com mecânica de cargas estáticas
     def applyTurnStartPassive(self) -> list[str]:
         """Acumula carga estática e recupera um pouco de energia no início do turno."""

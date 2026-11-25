@@ -32,20 +32,14 @@ class MinotaurOfCrete(Enemy):
             is_crit = random.random() < 0.20
             raw_damage = int(self._attack * 1.45)
             damage = player.takeDamage(raw_damage, type="physical", isCrit=is_crit)
-            status = ""
-            if player.isAlive() and random.random() < 0.35:
-                player.addStatusEffect("bleed", 2)
-                status = "bleed"
             crit_text = " (CRÍTICO!)" if is_crit else ""
-            status_text = " e causou sangramento!" if status else "!"
             return AbilityResult(
                 success=True,
                 damage_dealt=damage,
                 is_crit=is_crit,
-                status_applied=status,
                 message=(
                     f"{self._name} executou Investida de Chifres{crit_text} em "
-                    f"{player.getName()}, causando {damage} de dano{status_text}"
+                    f"{player.getName()}, causando {damage} de dano!"
                 ),
             )
 

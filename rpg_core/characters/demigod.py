@@ -56,8 +56,36 @@ class Demigod(Entity, ABC):
     def getAbilities(self) -> list[Ability]:
         return list(self._abilities)
 
+    def clearAbilities(self) -> None:
+        self._abilities.clear()
+
     def getInventory(self) -> Inventory:
         return self._inventory
+
+    def restoreState(
+        self,
+        level: int,
+        xp: int,
+        xp_to_next: int,
+        max_hp: int,
+        current_hp: int,
+        max_energy: int,
+        current_energy: int,
+        attack: int,
+        defense: int,
+        speed: int,
+    ) -> None:
+        """Restaura os atributos do semideus a partir de um save do banco de dados."""
+        self._level = level
+        self._xp = xp
+        self._xp_to_next = xp_to_next
+        self._max_hp = max_hp
+        self._current_hp = max(1, min(max_hp, current_hp))
+        self._max_energy = max_energy
+        self._current_energy = max(0, min(max_energy, current_energy))
+        self._attack = attack
+        self._defense = defense
+        self._speed = speed
 
     def gainXp(self, amount: int) -> None:
         """Adiciona XP e realiza level up automaticamente ao atingir o limite."""

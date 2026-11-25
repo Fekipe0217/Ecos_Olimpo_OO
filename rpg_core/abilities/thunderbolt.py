@@ -12,7 +12,7 @@ class Thunderbolt(Ability):
     def __init__(self) -> None:
         super().__init__(
             name="Raio de Zeus",
-            description="Invoca um relâmpago poderoso que causa dano elétrico e pode aplicar choque.",
+            description="Invoca um relâmpago poderoso que causa dano elétrico concentrado.",
             energy_cost=20,
             cooldown=2,
             required_level=1,
@@ -45,20 +45,13 @@ class Thunderbolt(Ability):
         raw_damage = int(user.getAttack() * 1.8)
         damage_dealt = target.takeDamage(raw_damage, type=self._element, isCrit=is_crit)
 
-        status_applied = ""
-        if target.isAlive() and random.random() < 0.5:
-            target.addStatusEffect("shock", 2)
-            status_applied = "shock"
-
         crit_text = " (CRÍTICO!)" if is_crit else ""
-        status_text = " e aplicou 'shock'!" if status_applied else "!"
         return AbilityResult(
             success=True,
             damage_dealt=damage_dealt,
             is_crit=is_crit,
-            status_applied=status_applied,
             message=(
                 f"{user.getName()} lançou {self._name}{crit_text} em {target.getName()}, "
-                f"causando {damage_dealt} de dano{status_text}"
+                f"causando {damage_dealt} de dano!"
             ),
         )

@@ -85,43 +85,6 @@ class Entity(ABC):
     def setDefending(self, status: bool) -> None:
         self._is_defending = status
 
-    def addStatusEffect(self, effect_name: str, duration: int) -> None:
-        """Aplica ou renova um efeito de status por N turnos."""
-        if effect_name and duration > 0:
-            self._status_effects[effect_name] = max(
-                self._status_effects.get(effect_name, 0), duration
-            )
-
-    def hasStatusEffect(self, effect_name: str) -> bool:
-        return self._status_effects.get(effect_name, 0) > 0
-
-    def processStatusEffects(self) -> list[str]:
-        """Processa os efeitos de status ativos no início do turno e reduz suas durações."""
-        logs: list[str] = []
-        expired: list[str] = []
-
-        for effect, turns in self._status_effects.items():
-            if effect == "shock":
-                shock_dmg = max(2, int(self._max_hp * 0.04))
-                self._current_hp = max(0, self._current_hp - shock_dmg)
-                logs.append(f"{self._name} sofreu {shock_dmg} de dano por choque elétrico!")
-            elif effect == "bleed":
-                bleed_dmg = max(3, int(self._max_hp * 0.05))
-                self._current_hp = max(0, self._current_hp - bleed_dmg)
-                logs.append(f"{self._name} sofreu {bleed_dmg} de dano por sangramento!")
-
-            remaining = turns - 1
-            if remaining <= 0:
-                expired.append(effect)
-            else:
-                self._status_effects[effect] = remaining
-
-        for effect in expired:
-            del self._status_effects[effect]
-            logs.append(f"O efeito '{effect}' em {self._name} terminou.")
-
-        return logs
-
     def takeDamage(self, rawDamage: int, type: str = "physical", isCrit: bool = False) -> int:
         """Calcula e aplica o dano recebido considerando crítico, defesa e postura defensiva."""
         effective_raw = int(rawDamage * 1.5) if isCrit else rawDamage

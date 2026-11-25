@@ -39,6 +39,9 @@ class Ability(ABC):
     def getCurrentCooldown(self) -> int:
         return self._current_cooldown
 
+    def setCurrentCooldown(self, cooldown: int) -> None:
+        self._current_cooldown = max(0, min(self._cooldown, cooldown))
+
     def getRequiredLevel(self) -> int:
         return self._required_level
 
